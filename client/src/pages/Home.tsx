@@ -1,5 +1,11 @@
+import { useState } from "react";
+import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Phone, Zap, BarChart3, Users, Shield, Rocket } from "lucide-react";
+import { Phone, Zap, BarChart3, Users, Shield, Rocket, X } from "lucide-react";
+import logo from "@/assets/image/logo.png";
+import erweima from "@/assets/image/erweima.png";
+import mainImg from "@/assets/image/1.webp";
+import hero from "@/assets/image/2.webp";
 
 /**
  * 杭州云风通讯官网首页
@@ -10,16 +16,126 @@ import { Phone, Zap, BarChart3, Users, Shield, Rocket } from "lucide-react";
  */
 
 export default function Home() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    company: "",
+    name: "",
+    phone: "",
+    channel: "",
+    agreed: false,
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.agreed) {
+      alert("请先同意隐私政策");
+      return;
+    }
+    console.log("提交的表单数据:", formData);
+    alert("提交成功！我们将尽快与您联系。");
+    setIsModalOpen(false);
+    setFormData({ company: "", name: "", phone: "", channel: "", agreed: false });
+  };
+
   return (
     <div className="min-h-screen bg-white">
+      {isModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/50" onClick={() => setIsModalOpen(false)} />
+          <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 p-6 z-10">
+            <button
+              onClick={() => setIsModalOpen(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition"
+            >
+              <X size={24} />
+            </button>
+            <h2 className="text-2xl font-bold text-gray-900 text-center mb-2">立即咨询 产品试用</h2>
+            <p className="text-gray-500 text-center text-sm mb-6">留下联系方式，将有AI行业专家为您提供专属服务</p>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <input
+                  type="text"
+                  placeholder="请输入您的公司名称"
+                  value={formData.company}
+                  onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  required
+                />
+              </div>
+              <div>
+                <input
+                  type="text"
+                  placeholder="请输入您的姓名"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  required
+                />
+              </div>
+              <div>
+                <input
+                  type="tel"
+                  placeholder="请输入您的电话"
+                  value={formData.phone}
+                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  required
+                />
+              </div>
+              <div className="pt-2">
+                <p className="text-gray-700 text-sm mb-3">您是从什么渠道了解到YesohAI的呢？</p>
+                <div className="flex flex-wrap gap-4">
+                  {[
+                    { value: "baidu", label: "百度搜索" },
+                    { value: "offline", label: "线下活动" },
+                    { value: "wechat", label: "公众号" },
+                    { value: "friend", label: "朋友介绍" },
+                    { value: "other", label: "其他" },
+                  ].map((item) => (
+                    <label key={item.value} className="flex items-center gap-1 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="channel"
+                        value={item.value}
+                        checked={formData.channel === item.value}
+                        onChange={(e) => setFormData({ ...formData, channel: e.target.value })}
+                        className="w-4 h-4 text-blue-600"
+                      />
+                      <span className="text-gray-600 text-sm">{item.label}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+              <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-full text-lg font-medium">
+                立即咨询
+              </Button>
+              <div className="flex items-start gap-2">
+                <input
+                  type="checkbox"
+                  id="agreed"
+                  checked={formData.agreed}
+                  onChange={(e) => setFormData({ ...formData, agreed: e.target.checked })}
+                  className="w-4 h-4 mt-0.5 text-blue-600 rounded"
+                />
+                <label htmlFor="agreed" className="text-gray-500 text-sm">
+                  我已阅读并同意
+                  <Link href="/privacy" className="text-blue-600 hover:underline" onClick={() => setIsModalOpen(false)}>
+                    《YesohAI隐私政策》
+                  </Link>
+                </label>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
       {/* 导航栏 */}
       <nav className="fixed top-0 w-full bg-white/95 backdrop-blur-sm border-b border-gray-200 z-50">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-blue-800 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-lg">Y</span>
+            <div className="w-16 h-16 overflow-hidden">
+              <img src={logo} alt="logo" className="w-full h-full object-contain scale-160" />
             </div>
-            <span className="font-bold text-lg text-gray-900">云风通讯</span>
+            <span className="font-bold text-lg text-gray-900">云风智能AI</span>
           </div>
           <div className="hidden md:flex gap-8">
             <a href="#about" className="text-gray-600 hover:text-blue-600 transition">公司简介</a>
@@ -74,7 +190,7 @@ export default function Home() {
             </div>
             <div className="relative">
               <img 
-                src="https://d2xsxph8kpxj0f.cloudfront.net/310519663482699492/ZofeqTMNeZABTep2geQqY3/hero-banner-ZFe9eeXntwQeEetT57Q5uj.webp"
+                src={mainImg}
                 alt="AI 外呼解决方案"
                 className="w-full h-auto rounded-2xl shadow-2xl"
               />
@@ -84,10 +200,10 @@ export default function Home() {
       </section>
 
       {/* 公司简介 */}
-      <section id="about" className="py-20 px-4 bg-gray-50">
+      <section id="about" className="py-20 px-4 bg-gray-50 scroll-mt-20">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">关于云风通讯</h2>
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">关于云风智能AI</h2>
             <p className="text-xl text-gray-600">成立于杭州，专注于智能语音交互与营销自动化技术研发</p>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
@@ -161,7 +277,7 @@ export default function Home() {
       </section>
 
       {/* 核心解决方案 */}
-      <section id="solution" className="py-20 px-4 bg-gradient-to-br from-blue-50 to-white">
+      <section id="solution" className="py-20 px-4 bg-gradient-to-br from-blue-50 to-white scroll-mt-20">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">核心解决方案</h2>
@@ -208,7 +324,7 @@ export default function Home() {
             </div>
             <div>
               <img 
-                src="https://d2xsxph8kpxj0f.cloudfront.net/310519663482699492/ZofeqTMNeZABTep2geQqY3/human-machine-cooperation-4wFx34j7L7uKDxBd9PZvQd.webp"
+                src={hero}
                 alt="人机协同"
                 className="w-full h-auto rounded-2xl shadow-lg"
               />
@@ -218,7 +334,7 @@ export default function Home() {
       </section>
 
       {/* 平台功能 */}
-      <section id="features" className="py-20 px-4 bg-white">
+      <section id="features" className="py-20 px-4 bg-white scroll-mt-20">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">六大核心模块</h2>
@@ -465,15 +581,15 @@ export default function Home() {
       </section>
 
       {/* CTA 和联系方式 */}
-      <section id="contact" className="py-20 px-4 bg-gradient-to-br from-blue-600 to-blue-800 text-white">
+      <section id="contact" className="py-20 px-4 bg-gradient-to-br from-blue-600 to-blue-800 text-white scroll-mt-20">
         <div className="container mx-auto max-w-4xl text-center">
           <h2 className="text-4xl font-bold mb-6">立即体验智能外呼新范式</h2>
           <p className="text-xl text-blue-100 mb-8">开启高效营销新时代！</p>
           <div className="flex flex-col md:flex-row gap-4 justify-center mb-12">
-            <Button size="lg" className="bg-white text-blue-600 hover:bg-gray-100">
+            {/* <Button size="lg" className="bg-white text-blue-600 hover:bg-gray-100">
               立即体验
-            </Button>
-            <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10">
+            </Button> */}
+            <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10" onClick={() => setIsModalOpen(true)}>
               预约演示
             </Button>
           </div>
@@ -482,9 +598,9 @@ export default function Home() {
               <h3 className="font-bold mb-2">联系电话</h3>
               <p className="text-blue-100">18761964017</p>
             </div>
-            <div>
-              <h3 className="font-bold mb-2">官方网站</h3>
-              <p className="text-blue-100">https://yesohai.com</p>
+            <div className="text-center">
+              <h3 className="font-bold mb-2">官方微信</h3>
+              <img src={erweima} alt="官网二维码" className="w-24 h-24 mx-auto" />
             </div>
             <div className="md:col-span-2">
               <h3 className="font-bold mb-2">公司地址</h3>
